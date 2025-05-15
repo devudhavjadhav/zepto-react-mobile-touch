@@ -64,7 +64,9 @@ export default {
 					700: '#7E22CE', // Main Zepto Purple
 					800: '#6b21a8',
 					900: '#581c87',
-				}
+				},
+				zeptoBg: '#25215E', // Dark purple background from the image
+				zeptoGreen: '#22c55e', // Green for the "Super Saver" text
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
