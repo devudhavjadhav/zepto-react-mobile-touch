@@ -55,4 +55,13 @@
   .product-card {
     @apply bg-white rounded-lg overflow-hidden shadow-sm transition-all hover:shadow-md p-3;
   }
+  
+  /* Custom zepto styles */
+  .zepto-top-tabs [data-state="active"] {
+    @apply bg-pink-500 text-white;
+  }
+  
+  .zepto-top-tabs [data-state="inactive"] {
+    @apply bg-white text-pink-500;
+  }
 }
