@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   id: number;
@@ -21,10 +22,20 @@ const ProductCard = ({
   weight,
   onAddToCart,
 }: ProductCardProps) => {
+  const navigate = useNavigate();
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAddToCart(id);
+  };
+
+  const handleCardClick = () => {
+    navigate(`/product/${id}`);
+  };
+
   return (
-    <div className="product-card">
+    <div className="product-card cursor-pointer" onClick={handleCardClick}>
       <div className="relative mb-2">
         <img
           src={image}
@@ -52,7 +63,7 @@ const ProductCard = ({
           <Button 
             size="sm" 
             className="p-0 h-8 w-8 bg-zepto-700 hover:bg-zepto-800 rounded-full" 
-            onClick={() => onAddToCart(id)}
+            onClick={handleAddToCart}
           >
             <PlusCircle className="h-5 w-5" />
           </Button>

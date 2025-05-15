@@ -3,9 +3,11 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface Product {
-  id: number;
+  id: number | string;
   name: string;
   price: number;
   originalPrice: number;
@@ -16,6 +18,9 @@ interface Product {
 }
 
 const ProductCarousel: React.FC = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const products: Product[] = [
     {
       id: 1,
@@ -59,11 +64,30 @@ const ProductCarousel: React.FC = () => {
     },
   ];
 
+  const handleAddToCart = (e: React.MouseEvent, productId: number | string) => {
+    e.stopPropagation();
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      toast({
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart`,
+      });
+    }
+  };
+
+  const navigateToProduct = (productId: number | string) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <ScrollArea className="w-full pb-4">
       <div className="flex space-x-4">
         {products.map((product) => (
-          <div key={product.id} className="flex-shrink-0 w-64 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+          <div 
+            key={product.id} 
+            className="flex-shrink-0 w-64 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 cursor-pointer"
+            onClick={() => navigateToProduct(product.id)}
+          >
             <div className="relative">
               <img 
                 src={product.image} 
@@ -88,7 +112,10 @@ const ProductCarousel: React.FC = () => {
                 <span className="ml-2 text-gray-500 line-through text-sm">₹{product.originalPrice}</span>
               </div>
               
-              <Button className="w-full bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50">
+              <Button 
+                className="w-full bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50"
+                onClick={(e) => handleAddToCart(e, product.id)}
+              >
                 Add to Cart
               </Button>
             </div>

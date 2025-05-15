@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, ChevronDown, Clock, ArrowRight } from "lucide-react";
@@ -8,9 +8,17 @@ import BottomNav from '@/components/BottomNav';
 import ProductCarousel from '@/components/ProductCarousel';
 import CategoryGrid from '@/components/CategoryGrid';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import LocationSelector from '@/components/LocationSelector';
+import { getCurrentLocation, getShortAddress } from '@/services/locationService';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("grocery");
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const [currentAddress, setCurrentAddress] = useState(getCurrentLocation().address);
+
+  const handleLocationSelect = (address: string) => {
+    setCurrentAddress(address);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
@@ -28,8 +36,11 @@ const Index = () => {
                   <span className="inline-block bg-blue-500 h-3 w-3 rounded-full"></span>
                 </span>
               </div>
-              <div className="flex items-center text-gray-600 text-sm">
-                <span>Tapodham Road, Tapodham, W...</span>
+              <div 
+                className="flex items-center text-gray-600 text-sm cursor-pointer"
+                onClick={() => setIsLocationOpen(true)}
+              >
+                <span>{getShortAddress(currentAddress)}</span>
                 <ChevronDown className="ml-1 h-4 w-4" />
               </div>
             </div>
@@ -92,7 +103,7 @@ const Index = () => {
           <ScrollArea className="w-full whitespace-nowrap pb-4">
             <div className="flex space-x-4">
               {["Fruits", "Vegetables", "Dairy", "Meat", "Bakery", "Beverages", "Snacks", "Frozen", "Household"].map((item) => (
-                <div key={item} className="flex-shrink-0 w-20">
+                <div key={item} className="flex-shrink-0 w-20 cursor-pointer">
                   <div className="h-20 w-20 bg-gray-200 rounded-full mb-2"></div>
                   <p className="text-center text-sm">{item}</p>
                 </div>
@@ -130,6 +141,13 @@ const Index = () => {
           <ProductCarousel />
         </div>
       </div>
+
+      {/* Location Selector */}
+      <LocationSelector 
+        open={isLocationOpen} 
+        onClose={() => setIsLocationOpen(false)}
+        onLocationSelect={handleLocationSelect}
+      />
 
       {/* Bottom Navigation */}
       <BottomNav />
