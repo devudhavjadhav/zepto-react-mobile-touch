@@ -8,6 +8,7 @@ import CartSidebar from "./CartSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrentLocation, getShortAddress } from '@/services/locationService';
+import { useCart } from "@/contexts/CartContext";
 
 const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -15,6 +16,7 @@ const Header = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const navigate = useNavigate();
   const currentAddress = getCurrentLocation().address;
+  const { cartCount } = useCart();
 
   return (
     <header className="sticky top-0 z-10 bg-white shadow-sm">
@@ -111,7 +113,11 @@ const Header = () => {
               <SheetTrigger asChild>
                 <Button variant="outline" className="relative border-gray-200" onClick={() => setCartOpen(true)}>
                   <ShoppingCart className="h-5 w-5 text-zepto-700" />
-                  <span className="absolute -top-2 -right-2 bg-zepto-700 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-zepto-700 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
                 </Button>
               </SheetTrigger>
               <CartSidebar onClose={() => setCartOpen(false)} />

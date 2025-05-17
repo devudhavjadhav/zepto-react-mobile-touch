@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, Minus, ShoppingBag, Clock } from "lucide-react";
-import Header from '@/components/Header';
+import { ArrowLeft, Plus, Minus, Clock } from "lucide-react";
 import BottomNav from '@/components/BottomNav';
 import { useToast } from '@/hooks/use-toast';
+import { useCart } from '@/contexts/CartContext';
+import { useIsMobile } from '@/hooks/use-mobile';
+import Header from '@/components/Header';
 
 // Mock product data - in a real app, this would come from an API
 const productsData = [
@@ -93,6 +95,8 @@ const ProductDetail = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addToCart } = useCart();
+  const isMobile = useIsMobile();
   
   // Find the product from our combined data
   const product = allProducts.find(p => p.id === productId);
@@ -109,6 +113,19 @@ const ProductDetail = () => {
   }
   
   const handleAddToCart = () => {
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      servingInfo: product.servingInfo || product.weight
+    };
+    
+    // Add to cart multiple times based on quantity
+    for (let i = 0; i < quantity; i++) {
+      addToCart(cartItem);
+    }
+    
     toast({
       title: "Added to cart",
       description: `${quantity} x ${product.name} added to your cart`
@@ -125,19 +142,24 @@ const ProductDetail = () => {
   
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      {/* Header */}
-      <div className="bg-white py-4 px-4 sticky top-0 z-10 shadow-sm">
-        <div className="flex items-center">
-          <button 
-            className="mr-2" 
-            onClick={() => navigate(-1)}
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-6 w-6" />
-          </button>
-          <h2 className="text-xl font-bold">Product Details</h2>
+      {/* Desktop Header */}
+      {!isMobile && <Header />}
+      
+      {/* Mobile Header */}
+      {isMobile && (
+        <div className="bg-white py-4 px-4 sticky top-0 z-10 shadow-sm">
+          <div className="flex items-center">
+            <button 
+              className="mr-2" 
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+            >
+              <ArrowLeft className="h-6 w-6" />
+            </button>
+            <h2 className="text-xl font-bold">Product Details</h2>
+          </div>
         </div>
-      </div>
+      )}
       
       {/* Product Image */}
       <div className="w-full aspect-square relative">
@@ -145,6 +167,11 @@ const ProductDetail = () => {
           src={product.image} 
           alt={product.name} 
           className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=300";
+            target.onerror = null;
+          }}
         />
         {product.discount > 0 && (
           <div className="absolute top-4 left-4 bg-red-500 text-white py-1 px-2 rounded-md font-bold">
@@ -154,7 +181,7 @@ const ProductDetail = () => {
       </div>
       
       {/* Product Info */}
-      <div className="bg-white p-4">
+      <div className="bg-white p-4 md:p-6 md:max-w-4xl md:mx-auto md:mt-6 md:rounded-lg md:shadow">
         <div className="flex items-center mb-1 text-gray-600">
           <Clock className="h-4 w-4 mr-1" />
           <span className="text-sm">{product.deliveryTime}</span>

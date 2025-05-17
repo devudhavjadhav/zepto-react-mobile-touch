@@ -2,62 +2,26 @@
 import { X, Plus, Minus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SheetContent } from "@/components/ui/sheet";
-import { useState } from "react";
-
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 interface CartSidebarProps {
   onClose: () => void;
 }
 
 const CartSidebar = ({ onClose }: CartSidebarProps) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Fresh Tomatoes",
-      price: 3.99,
-      quantity: 2,
-      image: "https://images.unsplash.com/photo-1546094096-0df4bcaaa337?q=80&w=100"
-    },
-    {
-      id: 2,
-      name: "Organic Bananas",
-      price: 2.49,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1603833665858-e61d17a86224?q=80&w=100"
-    },
-    {
-      id: 3,
-      name: "Whole Wheat Bread",
-      price: 4.99,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?q=80&w=100"
-    }
-  ]);
+  const navigate = useNavigate();
+  const { cartItems, updateQuantity, cartTotal } = useCart();
 
-  const updateQuantity = (id: number, action: 'increase' | 'decrease' | 'remove') => {
-    setCartItems(prevItems => 
-      prevItems.map(item => {
-        if (item.id !== id) return item;
-        
-        if (action === 'increase') {
-          return { ...item, quantity: item.quantity + 1 };
-        }
-        if (action === 'decrease') {
-          return { ...item, quantity: Math.max(1, item.quantity - 1) };
-        }
-        return item;
-      }).filter(item => action !== 'remove' || item.id !== id)
-    );
+  const handleCheckout = () => {
+    navigate('/checkout');
+    onClose();
   };
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const handleStartShopping = () => {
+    navigate('/');
+    onClose();
+  };
 
   return (
     <SheetContent className="w-full sm:max-w-md p-0 overflow-y-auto">
@@ -65,7 +29,7 @@ const CartSidebar = ({ onClose }: CartSidebarProps) => {
         {/* Header */}
         <div className="p-4 border-b sticky top-0 bg-white z-10">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium">Your Cart (3)</h2>
+            <h2 className="text-lg font-medium">Your Cart ({cartItems.length})</h2>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-5 w-5" />
             </Button>
@@ -83,6 +47,11 @@ const CartSidebar = ({ onClose }: CartSidebarProps) => {
                       src={item.image}
                       alt={item.name}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=300"; // Fallback image
+                        target.onerror = null; // Prevent infinite loops
+                      }}
                     />
                   </div>
                   <div className="flex-1">
@@ -132,7 +101,7 @@ const CartSidebar = ({ onClose }: CartSidebarProps) => {
               <p className="text-gray-500 text-center mb-6">
                 Looks like you haven't added anything to your cart yet.
               </p>
-              <Button className="bg-zepto-700 hover:bg-zepto-800" onClick={onClose}>
+              <Button className="bg-zepto-700 hover:bg-zepto-800" onClick={handleStartShopping}>
                 Start Shopping
               </Button>
             </div>
@@ -145,7 +114,7 @@ const CartSidebar = ({ onClose }: CartSidebarProps) => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                <span className="font-medium">${cartTotal.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">Delivery</span>
@@ -153,9 +122,9 @@ const CartSidebar = ({ onClose }: CartSidebarProps) => {
               </div>
               <div className="flex items-center justify-between text-lg font-medium">
                 <span>Total</span>
-                <span>${(totalPrice + 3.99).toFixed(2)}</span>
+                <span>${(cartTotal + 3.99).toFixed(2)}</span>
               </div>
-              <Button className="w-full bg-zepto-700 hover:bg-zepto-800">
+              <Button className="w-full bg-zepto-700 hover:bg-zepto-800" onClick={handleCheckout}>
                 Checkout
               </Button>
             </div>

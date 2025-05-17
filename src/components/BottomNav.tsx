@@ -4,12 +4,14 @@ import { Grid, Coffee, ShoppingCart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useCart } from "@/contexts/CartContext";
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
   const isMobile = useIsMobile();
+  const { cartCount } = useCart();
 
   const isActive = (path: string) => currentPath === path;
 
@@ -58,7 +60,11 @@ const BottomNav = () => {
           icon={
             <div className="relative">
               <ShoppingCart className="h-6 w-6" />
-              <div className="absolute -top-2 -right-2 bg-green-500 text-white text-[8px] rounded-full h-4 w-4 flex items-center justify-center">3</div>
+              {cartCount > 0 && (
+                <div className="absolute -top-2 -right-2 bg-green-500 text-white text-[8px] rounded-full h-4 w-4 flex items-center justify-center">
+                  {cartCount}
+                </div>
+              )}
             </div>
           } 
           label="Cart" 
