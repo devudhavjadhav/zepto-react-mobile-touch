@@ -2,9 +2,15 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext 
+} from "@/components/ui/carousel";
 
 interface Product {
   id: number | string;
@@ -80,49 +86,54 @@ const ProductCarousel: React.FC = () => {
   };
 
   return (
-    <ScrollArea className="w-full pb-4">
-      <div className="flex space-x-4">
+    <Carousel className="w-full">
+      <CarouselContent className="-ml-2 md:-ml-4">
         {products.map((product) => (
-          <div 
-            key={product.id} 
-            className="flex-shrink-0 w-64 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 cursor-pointer"
-            onClick={() => navigateToProduct(product.id)}
-          >
-            <div className="relative">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-48 object-cover"
-              />
-              <div className="absolute top-2 left-2 bg-purple-700 text-white px-2 py-1 rounded-md font-bold">
-                {product.discount}% Off
+          <CarouselItem key={product.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+            <div 
+              className="flex-shrink-0 w-full bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 cursor-pointer"
+              onClick={() => navigateToProduct(product.id)}
+            >
+              <div className="relative">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute top-2 left-2 bg-purple-700 text-white px-2 py-1 rounded-md font-bold">
+                  {product.discount}% Off
+                </div>
+              </div>
+              <div className="p-3">
+                <div className="flex items-center mb-1 text-gray-600">
+                  <Clock className="h-4 w-4 mr-1" />
+                  <span className="text-sm">{product.deliveryTime}</span>
+                </div>
+                
+                <h3 className="font-bold text-lg mb-1">{product.name}</h3>
+                <p className="text-sm text-gray-600 mb-2">{product.servingInfo}</p>
+                
+                <div className="flex items-center mb-3">
+                  <span className="font-bold text-lg">₹{product.price}</span>
+                  <span className="ml-2 text-gray-500 line-through text-sm">₹{product.originalPrice}</span>
+                </div>
+                
+                <Button 
+                  className="w-full bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50"
+                  onClick={(e) => handleAddToCart(e, product.id)}
+                >
+                  Add to Cart
+                </Button>
               </div>
             </div>
-            <div className="p-3">
-              <div className="flex items-center mb-1 text-gray-600">
-                <Clock className="h-4 w-4 mr-1" />
-                <span className="text-sm">{product.deliveryTime}</span>
-              </div>
-              
-              <h3 className="font-bold text-lg mb-1">{product.name}</h3>
-              <p className="text-sm text-gray-600 mb-2">{product.servingInfo}</p>
-              
-              <div className="flex items-center mb-3">
-                <span className="font-bold text-lg">₹{product.price}</span>
-                <span className="ml-2 text-gray-500 line-through text-sm">₹{product.originalPrice}</span>
-              </div>
-              
-              <Button 
-                className="w-full bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50"
-                onClick={(e) => handleAddToCart(e, product.id)}
-              >
-                Add to Cart
-              </Button>
-            </div>
-          </div>
+          </CarouselItem>
         ))}
+      </CarouselContent>
+      <div className="hidden md:block">
+        <CarouselPrevious className="left-0" />
+        <CarouselNext className="right-0" />
       </div>
-    </ScrollArea>
+    </Carousel>
   );
 };
 

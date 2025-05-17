@@ -12,6 +12,13 @@ import Header from '@/components/Header';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProductCarousel from '@/components/ProductCarousel';
 import CategoryGrid from '@/components/CategoryGrid';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext 
+} from "@/components/ui/carousel";
 
 const Index = () => {
   const [isLocationOpen, setIsLocationOpen] = useState(false);
@@ -22,6 +29,19 @@ const Index = () => {
   const handleLocationSelect = (address: string) => {
     setCurrentAddress(address);
   };
+
+  // Mind categories with images
+  const mindCategories = [
+    { name: "Fruits", image: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=150" },
+    { name: "Vegetables", image: "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?q=80&w=150" },
+    { name: "Dairy", image: "https://images.unsplash.com/photo-1628088062854-d1870b4553da?q=80&w=150" },
+    { name: "Meat", image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=150" },
+    { name: "Bakery", image: "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?q=80&w=150" },
+    { name: "Beverages", image: "https://images.unsplash.com/photo-1543253687-c931c8e01820?q=80&w=150" },
+    { name: "Snacks", image: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?q=80&w=150" },
+    { name: "Frozen", image: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?q=80&w=150" },
+    { name: "Household", image: "https://images.unsplash.com/photo-1563453392212-326f5e854473?q=80&w=150" },
+  ];
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] pb-16 md:pb-0">
@@ -112,16 +132,24 @@ const Index = () => {
         {/* "What's on your mind?" section */}
         <div className="bg-white rounded-lg p-4 mb-6">
           <h2 className="text-lg md:text-xl font-bold mb-4">What's On Your Mind?</h2>
-          <ScrollArea className="w-full whitespace-nowrap pb-4">
-            <div className="flex space-x-4">
-              {["Fruits", "Vegetables", "Dairy", "Meat", "Bakery", "Beverages", "Snacks", "Frozen", "Household"].map((item) => (
-                <div key={item} className="flex-shrink-0 w-20 cursor-pointer">
-                  <div className="h-20 w-20 bg-gray-200 rounded-full mb-2"></div>
-                  <p className="text-center text-sm">{item}</p>
-                </div>
+          <Carousel className="w-full">
+            <CarouselContent>
+              {mindCategories.map((item) => (
+                <CarouselItem key={item.name} className="md:basis-1/5 lg:basis-1/6">
+                  <div onClick={() => navigate(`/categories/${item.name.toLowerCase()}`)} className="flex flex-col items-center cursor-pointer">
+                    <div className="h-20 w-20 rounded-full mb-2 overflow-hidden">
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <p className="text-center text-sm">{item.name}</p>
+                  </div>
+                </CarouselItem>
               ))}
+            </CarouselContent>
+            <div className="hidden md:block">
+              <CarouselPrevious className="left-0" />
+              <CarouselNext className="right-0" />
             </div>
-          </ScrollArea>
+          </Carousel>
         </div>
 
         {/* Grocery & Kitchen Categories */}
