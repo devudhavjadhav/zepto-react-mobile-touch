@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
@@ -130,7 +129,7 @@ const ProductCarousel: React.FC = () => {
   // Set the number of visible items based on screen size
   const getCarouselOptions = () => {
     return {
-      align: "start",
+      align: "start" as const,
       loop: false,
     };
   };
@@ -149,6 +148,12 @@ const ProductCarousel: React.FC = () => {
                   src={product.image} 
                   alt={product.name} 
                   className="w-full h-48 object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=300"; // Fallback image
+                    target.onerror = null; // Prevent infinite loops
+                  }}
                 />
                 <div className="absolute top-2 left-2 bg-purple-700 text-white px-2 py-1 rounded-md font-bold">
                   {product.discount}% Off

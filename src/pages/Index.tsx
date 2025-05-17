@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,7 @@ const Index = () => {
     setCurrentAddress(address);
   };
 
-  // Mind categories with images
+  // Updated mind categories with reliable images
   const mindCategories = [
     { name: "Fruits", image: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=150" },
     { name: "Vegetables", image: "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?q=80&w=150" },
@@ -42,6 +41,12 @@ const Index = () => {
     { name: "Frozen", image: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?q=80&w=150" },
     { name: "Household", image: "https://images.unsplash.com/photo-1563453392212-326f5e854473?q=80&w=150" },
   ];
+
+  // Options for the mind categories carousel
+  const mindCarouselOptions = {
+    align: "start" as const,
+    loop: false,
+  };
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] pb-16 md:pb-0">
@@ -132,13 +137,23 @@ const Index = () => {
         {/* "What's on your mind?" section */}
         <div className="bg-white rounded-lg p-4 mb-6">
           <h2 className="text-lg md:text-xl font-bold mb-4">What's On Your Mind?</h2>
-          <Carousel className="w-full">
+          <Carousel className="w-full" opts={mindCarouselOptions}>
             <CarouselContent>
               {mindCategories.map((item) => (
-                <CarouselItem key={item.name} className="md:basis-1/5 lg:basis-1/6">
+                <CarouselItem key={item.name} className="pl-2 md:pl-4 sm:basis-1/3 md:basis-1/3 lg:basis-1/3">
                   <div onClick={() => navigate(`/categories/${item.name.toLowerCase()}`)} className="flex flex-col items-center cursor-pointer">
                     <div className="h-20 w-20 rounded-full mb-2 overflow-hidden">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <img 
+                        src={item.image} 
+                        alt={item.name} 
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=150";
+                          target.onerror = null;
+                        }}
+                      />
                     </div>
                     <p className="text-center text-sm">{item.name}</p>
                   </div>
@@ -146,8 +161,8 @@ const Index = () => {
               ))}
             </CarouselContent>
             <div className="hidden md:block">
-              <CarouselPrevious className="left-0" />
-              <CarouselNext className="right-0" />
+              <CarouselPrevious className="left-0 lg:-left-4" />
+              <CarouselNext className="right-0 lg:-right-4" />
             </div>
           </Carousel>
         </div>
